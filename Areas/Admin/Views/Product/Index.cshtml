@@ -1,0 +1,232 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopVerse - Admin Ürün Yönetimi</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome & Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="background-color: #ffffff; color: #2b2d42;">
+
+    <!-- Admin Navbar (Bordo Arka Plan, Gold Yazılar) -->
+    <nav class="navbar navbar-expand-lg border-bottom shadow-sm py-3 mb-4" style="background-color: #800020;">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" style="color: #d4af37;" href="/Admin/Product/Index">
+                ShopVerse Admin <i class="bi bi-shield-lock-fill ms-1"></i>
+            </a>
+            <div class="navbar-nav ms-auto align-items-center">
+                <a class="nav-link px-3" style="color: #ffffff;" href="/Product/Index" target="_blank">
+                    Mağazaya Git <i class="fas fa-external-link-alt ms-1" style="color: #d4af37;"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Ana İçerik Alanı -->
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold" style="color: #800020;">
+                <i class="fas fa-boxes me-2" style="color: #d4af37;"></i>Ürün Yönetimi
+            </h2>
+            <button class="btn px-4 py-2 fw-bold rounded-pill shadow-sm" style="background-color: #800020; color: #d4af37; border: none;" data-bs-toggle="modal" data-bs-target="#productModal" onclick="openCreateModal()">
+                <i class="fas fa-plus me-2"></i>Yeni Ürün Ekle
+            </button>
+        </div>
+
+        <!-- Ürünler Tablosu -->
+        <div class="card border-0 shadow-sm rounded-4 p-3" style="background-color: #ffffff; border: 1px solid #800020 !important;">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #800020;">
+                            <th style="color: #800020;">ID</th>
+                            <th style="color: #800020;">Görsel</th>
+                            <th style="color: #800020;">Ürün Adı</th>
+                            <th style="color: #800020;">Fiyat</th>
+                            <th class="text-end" style="color: #800020;">İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-product-list">
+                        <!-- Dinamik olarak JavaScript dolduracak -->
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">Ürünler yükleniyor...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ürün Ekle / Güncelle Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow" style="background-color: #ffffff;">
+                <div class="modal-header border-0 pb-0 pt-4 px-4">
+                    <h5 class="modal-title fw-bold" id="modalTitle" style="color: #800020;">Yeni Ürün Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="productForm">
+                        <input type="hidden" id="productId">
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold" style="color: #800020;">Ürün Adı</label>
+                            <input type="text" class="form-control" id="productName" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold" style="color: #800020;">Fiyat (₺)</label>
+                            <input type="number" step="0.01" class="form-control" id="productPrice" required>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold" style="color: #800020;">Görsel Yolu (URL veya Dosya Adı)</label>
+                            <input type="text" class="form-control" id="productImage" placeholder="/images/elbise1.jpg">
+                        </div>
+                        
+                        <button type="submit" class="btn w-100 rounded-pill py-3 fw-bold shadow-sm" style="background-color: #800020; color: #d4af37; border: none;">
+                            Kaydet
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Admin JavaScript Mantığı -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAdminProducts();
+
+            document.getElementById('productForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveProduct();
+            });
+        });
+
+        async function loadAdminProducts() {
+            try {
+                const response = await fetch('/api/products');
+                if (!response.ok) throw new Error("Ürünler yüklenemedi");
+                const products = await response.json();
+
+                const tbody = document.getElementById('admin-product-list');
+                if (products.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">Kayıtlı ürün bulunamadı.</td></tr>`;
+                    return;
+                }
+
+                let html = '';
+                products.forEach(p => {
+                    let id = p.id || p.Id;
+                    let name = p.name || p.Name;
+                    let price = p.price || p.Price;
+                    let image = p.imagePath || p.ImagePath || '/images/elbise1.jpg';
+
+                    html += `
+                    <tr style="border-bottom: 1px solid rgba(128, 0, 32, 0.15);">
+                        <td class="fw-semibold" style="color: #800020;">#${id}</td>
+                        <td>
+                            <img src="${image}" class="rounded-3 shadow-sm" style="width: 50px; height: 50px; object-fit: cover;" onerror="this.src='https://via.placeholder.com/50'">
+                        </td>
+                        <td class="fw-bold" style="color: #800020;">${name}</td>
+                        <td class="fw-semibold" style="color: #d4af37;">${price.toLocaleString()} ₺</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm rounded-circle me-1" style="background-color: #800020; color: #d4af37;" onclick="openEditModal(${id}, '${name}', ${price}, '${image}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-sm rounded-circle" style="background-color: #dc3545; color: #ffffff;" onclick="deleteProduct(${id})">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                });
+
+                tbody.innerHTML = html;
+            } catch (err) {
+                console.error(err);
+                document.getElementById('admin-product-list').innerHTML = `<tr><td colspan="5" class="text-center py-4 text-danger">Bağlantı hatası oluştu.</td></tr>`;
+            }
+        }
+
+        function openCreateModal() {
+            document.getElementById('modalTitle').innerText = "Yeni Ürün Ekle";
+            document.getElementById('productId').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productImage').value = '';
+        }
+
+        function openEditModal(id, name, price, image) {
+            document.getElementById('modalTitle').innerText = "Ürün Düzenle";
+            document.getElementById('productId').value = id;
+            document.getElementById('productName').value = name;
+            document.getElementById('productPrice').value = price;
+            document.getElementById('productImage').value = image;
+
+            var myModal = new bootstrap.Modal(document.getElementById('productModal'));
+            myModal.show();
+        }
+
+        async function saveProduct() {
+            const id = document.getElementById('productId').value;
+            const name = document.getElementById('productName').value;
+            const price = parseFloat(document.getElementById('productPrice').value);
+            const imagePath = document.getElementById('productImage').value;
+
+            const productData = { name, price, imagePath };
+            let url = '/api/products';
+            let method = 'POST';
+
+            if (id) {
+                url += `/${id}`;
+                method = 'PUT';
+                productData.id = parseInt(id);
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(productData)
+                });
+
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    alert('İşlem başarısız oldu!');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Bir hata oluştu.');
+            }
+        }
+
+        async function deleteProduct(id) {
+            if (confirm('Bu ürünü silmek istediğinize emin misiniz?')) {
+                try {
+                    const response = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        alert('Silme işlemi başarısız!');
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

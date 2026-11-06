@@ -1,0 +1,56 @@
+@{
+    Layout = null;
+}
+
+using Microsoft.AspNetCore.Mvc;
+using ETicaret.Business;
+using ETicaret.Entities;
+
+namespace ETICARETAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class AdminController : ControllerBase
+    {
+        private readonly IOrderService _orderService;
+        private readonly IProductService _productService;
+
+        public AdminController(IOrderService orderService, IProductService productService)
+        {
+            _orderService = orderService;
+            _productService = productService;
+        }
+
+        // Gelen Siparişleri Görüntüleme ve İnceleme
+        [HttpGet("orders")]
+        public IActionResult GetOrders()
+        {
+            var orders = _orderService.GetAllOrders();
+            return Ok(orders);
+        }
+
+        // Ürün Ekleme (Admin CRUD - Create)
+        [HttpPost("add-product")]
+        public IActionResult AddProduct([FromBody] Product product)
+        {
+            if (product == null) return BadRequest("Geçersiz ürün verisi.");
+            _productService.AddProduct(product);
+            return Ok(new { message = "Ürün başarıyla eklendi!", product });
+        }
+
+        // Ürün Güncelleme (Admin CRUD - Update)
+        [HttpPut("update-product/{id}")]
+        public IActionResult UpdateProduct(int id, [FromBody] Product product)
+        {
+            if (product == null) return BadRequest("Geçersiz veri.");
+            return Ok(new { message = $"ID'si {id} olan ürün güncellendi.", product });
+        }
+
+        // Ürün Silme (Admin CRUD - Delete)
+        [HttpDelete("delete-product/{id}")]
+        public IActionResult DeleteProduct(int id)
+        {
+            return Ok(new { message = $"ID'si {id} olan ürün silindi." });
+        }
+    }
+}

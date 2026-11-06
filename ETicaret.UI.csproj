@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\ETicaret.Business\ETicaret.Business.csproj" />
+    <ProjectReference Include="..\ETicaret.Entities\ETicaret.Entities.csproj" />
+  </ItemGroup>
+
+   <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <NoWarn>$(NoWarn);CS8618;NU1903;CS0436</NoWarn>
+  </PropertyGroup>
+
+
+</Project>
