@@ -122,7 +122,7 @@
                 <a class="nav-link px-3 active fw-bold text-light" href="/">Anasayfa</a>
                 <a class="nav-link px-3" style="color: #d4af37;" href="/Cart">Sepetim</a>
                 
-                <!-- Admin Başlığı (Sadece Yönetici Giriş Yapınca Dinamik Olarak Buraya Gelecek) -->
+                <!-- Admin Başlığı  -->
                 <span id="adminMenuItem"></span>
 
                 <a class="nav-link px-3 text-light" id="authLink" href="/Account/Login">Giriş Yap</a>
@@ -193,7 +193,7 @@
             const registerBtn = document.getElementById('registerBtn');
 
             if (isLoggedIn) {
-                // Giriş yapıldıysa Giriş Yap yazısı Çıkış Yap olur
+                
                 authLink.textContent = 'Çıkış Yap';
                 authLink.href = '#';
                 authLink.onclick = (e) => {
@@ -202,9 +202,9 @@
                     window.location.reload();
                 };
 
-                registerBtn.style.display = 'none'; // Kayıt Ol butonunu gizler
+                registerBtn.style.display = 'none'; 
 
-                // Eğer giriş yapan kişi Admin ise menüye "Admin" başlığını ekler
+                
                 if (userRole === 'admin') {
                     adminMenuItem.innerHTML = `
                         <a class="nav-link px-3 fw-bold" style="color: #d4af37;" href="/Admin">

@@ -34,7 +34,7 @@ namespace ETicaret.UI.Controllers
                 return View();
             }
 
-            // Başarılı giriş sonrası ana sayfaya veya ürün sayfasına yönlendirme
+            
             return RedirectToAction("Index", "Product");
         }
 

@@ -20,12 +20,12 @@
     <!-- Navbar (Bordo Arka Plan, Gold Yazılar) -->
 <nav class="navbar navbar-expand-lg border-bottom shadow-sm py-3 mb-4" style="background-color: #800020;">
     <div class="container">
-        <!-- Logo Tıklanınca da Anasayfaya Gitmesi İçin Düzeltildi -->
+        
         <a class="navbar-brand fw-bold fs-4" style="color: #d4af37;" href="/Home/Index">
             B&O Atelier <i class="bi bi-bag-heart-fill ms-1"></i>
         </a>
         <div class="navbar-nav ms-auto align-items-center">
-            <!-- DÜZELTİLEN KISIM: /Product/Index yerine /Home/Index yazıldı -->
+            
             <a class="nav-link px-3 text-light" href="/Home/Index">Anasayfa</a>
             <a class="nav-link px-3 active fw-bold" style="color: #d4af37;" href="/Cart/Index">Sepetim</a>
         </div>
@@ -54,7 +54,7 @@
                                 </tr>
                             </thead>
                             <tbody id="cart-items-body">
-                                <!-- Dinamik olarak JavaScript dolduracak -->
+                                
                                 <tr>
                                     <td colspan="5" class="text-center py-4 text-muted">Sepetiniz yükleniyor...</td>
                                 </tr>
@@ -102,7 +102,7 @@
         });
 
         function loadCart() {
-            // DÜZELTME: Varsayılan elbise verisi kaldırıldı ([] yapıldı)
+            
             let cart = JSON.parse(localStorage.getItem('shopverse_cart')) || [];
             renderCart(cart);
         }

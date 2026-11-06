@@ -8,8 +8,7 @@ namespace ETicaret.UI.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            // İleride buraya Session veya Veritabanından sepet verilerini çeken kodu ekleyebilirsin.
-            // Şimdilik dinamik bir kontrol mekanizması olması için View'a boş bir liste gönderiyoruz.
+            
             var cartItems = new List<dynamic>(); 
 
             return View(cartItems);
